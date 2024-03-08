@@ -33,9 +33,7 @@ public class IOQueue {
     
     public void addProcess(Process p){
         processes.add(p);
-        if(p.getState() != ProcessState.NEW_IO)
-            p.setState(ProcessState.IO);
-        
+        p.setState(ProcessState.NEW_IO);   
     }
     
     public void update(){
@@ -46,6 +44,7 @@ public class IOQueue {
                     temp = processes.get(i);
                     processes.remove(processes.get(i));
                     os.interrupt(InterruptType.IO, temp);
+                    i--;
                 }
             }else{
                 processes.get(i).setState(ProcessState.IO);

@@ -30,6 +30,18 @@ public class Process implements Comparable{
         state = ProcessState.NEW;
     }
     
+    public Process(boolean auto) {
+        pid = -1;
+        time_init = 0;
+        time_finished = -1;
+        pbl = new ProcessBurstList();
+        if(auto){
+            pbl.generateRandomBursts(NUM_CPU_CYCLES, MAX_CPU_CYCLES, MAX_IO_CYCLES);
+            //pbl.generateSimpleBursts(); //Generates process with 3 bursts (CPU, IO, CPU) with 5 cycles each
+        }
+        state = ProcessState.NEW;
+    }
+    
     public Process(int pid, int time_init) {
         this();
         this.pid = pid;
@@ -54,7 +66,9 @@ public class Process implements Comparable{
         this.time_finished = time_finished;
     }
     
-    
+    public void addBurst(ProcessBurst pb){
+        pbl.addBurst(pb);
+    }
     
     public int getPid() {
         return pid;

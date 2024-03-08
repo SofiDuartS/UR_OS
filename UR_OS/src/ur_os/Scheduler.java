@@ -29,6 +29,12 @@ public abstract class Scheduler {
     public abstract void getNext(boolean cpuEmpty);
     public abstract void newProcess(boolean cpuEmpty); //Implement for Preemtive schedulers
     public abstract void IOReturningProcess(boolean cpuEmpty); //Implement for Preemtive schedulers
+    //public abstract void CPUReturningProcess(boolean cpuEmpty); //Implement for Preemtive schedulers
+    
+    
+    public boolean isEmpty(){
+        return this.processes.isEmpty();
+    }
     
     public void addProcess(Process p){
         
@@ -43,9 +49,7 @@ public abstract class Scheduler {
     }
     
     public void update(){
-        if(processes.size()> 0){
             getNext(os.isCPUEmpty());
-        }
     }
     
     public Process removeProcess(Process p){

@@ -33,9 +33,9 @@ public class RoundRobin extends Scheduler{
     }
     
     @Override
-    public void newProcess(boolean cpuEmpty) {} //Non-preemtive in this event
+    public void newProcess(boolean cpuEmpty) {} //It's empty because it is Non-preemptive
 
     @Override
-    public void IOReturningProcess(boolean cpuEmpty) {} //Non-preemtive in this event
+    public void IOReturningProcess(boolean cpuEmpty) {} //It's empty because it is Non-preemptive
     
 }

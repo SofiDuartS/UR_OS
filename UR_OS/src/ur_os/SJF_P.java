@@ -22,13 +22,13 @@ public class SJF_P extends Scheduler{
 
     @Override
     public void IOReturningProcess(boolean cpuEmpty){// When a process return from IO and enters the queue, process in CPU, if any, is extracted to compete with the rest
-            
+               
     } 
     
    
     @Override
     public void getNext(boolean cpuEmpty) {
-        
+       
     }
     
 }
