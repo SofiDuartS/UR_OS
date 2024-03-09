@@ -29,6 +29,8 @@ public class ReadyQueue {
         //s = new RoundRobin(os,3);
         
         //s = new MFQ(os,new RoundRobin(os,3),new RoundRobin(os,6),new FCFS(os));
+        
+        s = new MFQ(os, new SJF_NP(os), new SJF_NP(os), new FCFS(os));
     }
     
     public ReadyQueue(OS OS, Scheduler s){
