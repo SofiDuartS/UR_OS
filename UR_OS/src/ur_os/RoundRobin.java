@@ -35,8 +35,9 @@ public class RoundRobin extends Scheduler{
                 os.interrupt(InterruptType.SCHEDULER_RQ_TO_CPU, p);
             }else{
                 Process proc = os.cpu.getProcess();
+                cont=0;
                 for(Process pr : processes){
-                    if (cont < q) {
+                    if (cont <= q) {
                         apuntador = pr;
                         os.interrupt(InterruptType.SCHEDULER_RQ_TO_CPU, apuntador);
                         cont++;
@@ -44,7 +45,7 @@ public class RoundRobin extends Scheduler{
                     }
                     if (proc.getRemainingTimeInCurrentBurst() != 0){
                         os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ, apuntador);
-                        processes.add(apuntador);
+                        
                     }
                 }
                 
@@ -57,13 +58,20 @@ public class RoundRobin extends Scheduler{
     @Override
     public void newProcess(boolean cpuEmpty) {
         //the process goes to the ready queue
-        Process p1 =  os.cpu.getProcess();
-        os.cpu.removeProcess();
-        os.rq.addProcess(p1);
+        if(!cpuEmpty){
+            Process p2 =  os.cpu.getProcess();
+            os.cpu.removeProcess();
+            os.rq.addProcess(p2);
+        }
     } 
 
     @Override
     public void IOReturningProcess(boolean cpuEmpty) {
+        if(!cpuEmpty){
+            Process p3 =  os.cpu.getProcess();
+            os.cpu.removeProcess();
+            os.rq.addProcess(p3);
+        }
     } 
     
 }
