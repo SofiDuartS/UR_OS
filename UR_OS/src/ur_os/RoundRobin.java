@@ -28,26 +28,25 @@ public class RoundRobin extends Scheduler{
     @Override
     public void getNext(boolean cpuEmpty) {
         if(!processes.isEmpty()){
-            Process apuntador = null;
+            
             if (cpuEmpty) {
+                cont=0;
                 Process p = processes.get(0);
                 processes.remove();
                 os.interrupt(InterruptType.SCHEDULER_RQ_TO_CPU, p);
+                cont++;
+                
             }else{
                 Process proc = os.cpu.getProcess();
-                cont=0;
-                for(Process pr : processes){
-                    if (cont <= q) {
-                        apuntador = pr;
-                        os.interrupt(InterruptType.SCHEDULER_RQ_TO_CPU, apuntador);
-                        cont++;
-                        processes.remove(apuntador);
-                    }
+                if(cont <=q){
+                    cont++;
+                }else if(cont > q){
+                    
                     if (proc.getRemainingTimeInCurrentBurst() != 0){
-                        os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ, apuntador);
-                        
+                        os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ, proc);
                     }
                 }
+                
                 
             }
         }

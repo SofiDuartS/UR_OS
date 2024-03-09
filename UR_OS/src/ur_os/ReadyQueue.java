@@ -26,7 +26,7 @@ public class ReadyQueue {
         
         //s = new FCFS(os);
         
-        s = new RoundRobin(os,3);
+        s = new RoundRobin(os,5);
         
         //s = new MFQ(os,new RoundRobin(os,3),new RoundRobin(os,6),new FCFS(os));
     }
