@@ -20,7 +20,7 @@ public class ReadyQueue {
     public ReadyQueue(OS os){
         this.os = os;
         
-        //s = new SJF_P(os);
+        s = new SJF_P(os);
         
         //s = new SJF_NP(os);
         
