@@ -43,6 +43,8 @@ public class OS {
                     p.setTime_finished(system.getTime());
                 }else{
                     ioq.addProcess(p);
+                    //p moved from CPU to IO = context switch
+                    system.contextSwitches++;
                 }
             break;
             
@@ -56,6 +58,7 @@ public class OS {
                 rq.addProcess(temp);
                 if(p != null){
                     cpu.addProcess(p);
+                    
                 }
                 
             break;
@@ -63,6 +66,7 @@ public class OS {
             case SCHEDULER_RQ_TO_CPU:
                 //When the scheduler defined which process will go to CPU
                 cpu.addProcess(p);
+                system.contextSwitches++; //from RQ to CPU = context switch
                 
             break;
             
