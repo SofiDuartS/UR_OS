@@ -18,7 +18,7 @@ public class Process implements Comparable{
     int time_finished;
     ProcessBurstList pbl;
     ProcessState state;
-
+    float waitingTime = 0;
 
     public Process() {
         pid = -1;

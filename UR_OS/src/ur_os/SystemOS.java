@@ -28,6 +28,9 @@ public class SystemOS implements Runnable{
     protected ArrayList<Process> processes;
     ArrayList<Integer> execution;
 
+    float cpuCycles = 0; //every time a process executes on CPU, cpuCycles ++
+    float contextSwitches = 0; //every time there's a context switch, contextCycles ++
+
     public SystemOS() {
         cpu = new CPU();
         ioq = new IOQueue();
@@ -176,6 +179,7 @@ public class SystemOS implements Runnable{
                 tempID = -1;
             }else{
                 tempID = temp_exec.getPid();
+                cpuCycles++;
             }
             execution.add(tempID);
             
@@ -191,7 +195,7 @@ public class SystemOS implements Runnable{
             System.out.println("After the cycle: ");
             System.out.println(cpu);
             System.out.println(ioq);
-            
+
             i++;
             clock++;
         }
@@ -202,6 +206,23 @@ public class SystemOS implements Runnable{
         for (Integer num : execution) {
             System.out.print(num+" ");
         }
+        System.out.println("");
+        System.out.println("******SCHEDULING CRITERIA******");
+        System.out.println("******CPU utilization******");
+        System.out.print("\tCPU utilization = ");
+        System.out.println(cpuCycles/clock);
+        System.out.println("******Throughput******");
+        System.out.print("\tThroughput = ");
+        System.out.println(this.throughPut());
+        System.out.println("******Turnaround Time******");
+        System.out.println(this.turnAroundTime());
+        System.out.println("******Waiting Time******");
+        System.out.println(this.waitingTime());
+        System.out.println("******Context Switching******");
+        System.out.print("\tContext Switching / execution time = ");
+        System.out.println(contextSwitches/clock);
+        System.out.print("\tContext Switching / num processes = ");
+        System.out.println(contextSwitchingNumP());
         System.out.println("");
     }
     
@@ -216,6 +237,40 @@ public class SystemOS implements Runnable{
         
         System.out.println(sb.toString());
     }
+
+    public float throughPut(){
+        float numP = processes.size();
+        return numP/clock;
+    }
     
+    public float waitingTime(){
+        float sum = 0;
+        for(Process proc: processes){
+            System.out.print("\tWaiting time for PID ");
+            System.out.print(proc.pid);
+            System.out.print(" = ");
+            System.out.println(proc.waitingTime);
+            sum = sum + proc.waitingTime;
+        }
+        System.out.print("\tAverage Waiting Time = ");
+        return sum/processes.size();
+    }
+
+    public float turnAroundTime(){
+        float sum = 0;
+        for(Process proc : processes){
+            System.out.print("\tTurnaround time for PID ");
+            System.out.print(proc.pid);
+            System.out.print(" = ");
+            System.out.println(proc.time_finished - proc.time_init + 1);
+            sum = sum + proc.time_finished - proc.time_init + 1;
+        }
+        System.out.print("\tAverage turnaround time = ");
+        return sum/processes.size();
+    }
     
+    public float contextSwitchingNumP(){
+        float numP = processes.size();
+        return contextSwitches/numP;
+    }
 }

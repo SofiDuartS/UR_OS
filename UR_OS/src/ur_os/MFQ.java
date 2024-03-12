@@ -74,7 +74,8 @@ public class MFQ extends Scheduler{
         Scheduler s1 = schedulers.get(currentScheduler);
         
         switch(currentScheduler){
-            case 0 -> {
+            case 0:
+
                 s1.processes = (LinkedList) pQ0.clone();
                 s1.getNext(cpuEmpty); //Here s1.processes gets updated, so we should update pQ0 and pQ0Past accordingly
                 
@@ -93,14 +94,10 @@ public class MFQ extends Scheduler{
                         pQ1.add(proc); //if the process returns to s1.processes, it should go to the next queue
                     }
                 }
-                pQ0LastRunning = false; //assume last process running is not from pQ0
-                for(Process proc: pQ0Past){
-                    if(os.cpu.getProcess() == proc){
-                        pQ0LastRunning = true; //last process running is from pQ0
-                    }
-                }
-            }
-            case 1 -> {
+                break;
+
+            case 1:
+                
                 s1.processes = (LinkedList) pQ1.clone();
                 s1.getNext(cpuEmpty); //Here s1.processes gets updated, so we should update pQ1 and pQ1Past accordingly
                 for(Process proc: pQ1){
@@ -120,14 +117,10 @@ public class MFQ extends Scheduler{
                         pQ2.add(proc); //if the process returns to s1.processes, it should go to the next queue
                     }
                 }
-                pQ1LastRunning = false; //assume last process running is not from pQ1
-                for(Process proc: pQ1Past){
-                    if(os.cpu.getProcess()== proc){
-                            pQ1LastRunning = true; //last process running is from pQ1
-                        }
-                }
-            }
-            case 2 -> {
+                break;
+
+            case 2: 
+
                 s1.processes = (LinkedList) pQ2.clone();
                 s1.getNext(cpuEmpty); //Here s1.processes gets updated, so we should update pQ2 and pQ2Past accordingly
                 for(Process proc: pQ2){
@@ -135,9 +128,6 @@ public class MFQ extends Scheduler{
                         pQ2.remove(proc); //it shouldn't be on pQ2 since it moved to CPU
                         if(!proc.isFinished()){ //if proc still has time left
                             pQ2Past.add(proc); //it will return at any moment, so keep track of where the process came from
-                        }
-                        if(os.cpu.getProcess() == proc){
-                            pQ2LastRunning = true; //last process running is from pQ2
                         }
                     }
                 }
@@ -148,16 +138,52 @@ public class MFQ extends Scheduler{
                         pQ2.add(proc); //since this is the last queue, the process should return to the same queue
                     }
                 }
-                pQ2LastRunning = false; //assume last process running is not from pQ2
-                for(Process proc: pQ2Past){
-                    if(os.cpu.getProcess() == proc){
-                        pQ2LastRunning = true; //last process running is from pQ2
-                    }
-                }
-            }
+                break;
         }
         
-        
+        pQ0LastRunning = false; //assume last process running is not from pQ0
+        pQ1LastRunning = false; //assume last process running is not from pQ1
+        pQ2LastRunning = false; //assume last process running is not from pQ2
+
+        for(Process proc: pQ0Past){
+            if(os.cpu.getProcess() == proc){
+                pQ0LastRunning = true; //last process running is from pQ0
+                pQ1LastRunning = false; //last process running isn't from pQ1
+                pQ2LastRunning = false; //last process running isn't rom pQ2
+            }
+            //update waiting time
+            if(proc.state == ProcessState.READY){proc.waitingTime++;}
+        }
+        for(Process proc: pQ1Past){
+            if(os.cpu.getProcess()== proc){
+                pQ0LastRunning = false; //last process running isn't from pQ0
+                pQ1LastRunning = true; //last process running is from pQ1
+                pQ2LastRunning = false; //last process running isn't from pQ2
+            }
+            //update waiting time
+            if(proc.state == ProcessState.READY){proc.waitingTime++;}
+        }
+        for(Process proc: pQ2Past){
+            if(os.cpu.getProcess() == proc){
+                pQ0LastRunning = false; //last process running isn't from pQ0
+                pQ1LastRunning = false; //last process running isn't from pQ1
+                pQ2LastRunning = true; //last process running is from pQ2
+            }
+            //update waiting time
+            if(proc.state == ProcessState.READY){proc.waitingTime++;}
+        }
+        for(Process proc: pQ0){
+            //update waiting time
+            if(proc.state == ProcessState.READY){proc.waitingTime++;}
+        }
+        for(Process proc: pQ1){
+            //update waiting time
+            if(proc.state == ProcessState.READY){proc.waitingTime++;}
+        }
+        for(Process proc: pQ2){
+            //update waiting time
+            if(proc.state == ProcessState.READY){proc.waitingTime++;}
+        }
         
         System.out.println("AFTER");
         System.out.println("pQ0:");
@@ -195,15 +221,15 @@ public class MFQ extends Scheduler{
         }else if(p.getState() == ProcessState.CPU){
             //if process came from CPU, return it to the next queue
             switch(currentScheduler){
-                case 0 -> {
+                case 0:
                     pQ1.add(p);
-                }
-                case 1 -> {
+                    break;
+                case 1:
                     pQ2.add(p);
-                }
-                case 2 -> {
+                    break;
+                case 2:
                     pQ2.add(p); //if it exits last queue, return to same one
-                }
+                    break;
             }
             if(pQ0Past.contains(p)){
                 pQ0Past.remove(p);
@@ -213,8 +239,6 @@ public class MFQ extends Scheduler{
                 pQ2Past.remove(p);
             }
             os.cpu.removeProcess();
-        }else if(p.getState() == ProcessState.READY){
-            System.out.println("process was readyState");
         }
         
         p.setState(ProcessState.READY);
