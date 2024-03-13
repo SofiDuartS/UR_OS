@@ -84,11 +84,12 @@ public class RoundRobin extends Scheduler{
                 
             }
         }
-        //Update waiting time
-        for(Process proc: processes){
-            if(proc.state == ProcessState.READY){proc.waitingTime ++;}
+        if(!mfq){
+            //Update waiting time
+            for(Process proc: processes){
+                if(proc.state == ProcessState.READY){proc.waitingTime ++;}
+            }
         }
-        
     }
     
     @Override

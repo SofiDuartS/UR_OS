@@ -210,7 +210,7 @@ public class SystemOS implements Runnable{
         int tempID;
         while(!isSimulationFinished() && i < MAX_SIM_CYCLES){//MAX_SIM_CYCLES is the maximum simulation time, to avoid infinite loops
             System.out.println("******Clock: "+i+"******");
-            if(i == 59){
+            if(i == 43){
                 int a =0;
             }
             System.out.println(cpu);
@@ -297,13 +297,13 @@ public class SystemOS implements Runnable{
         double tot = 0;
 
         for(Process proc : processes){
-            /*System.out.print("\tTurnaround time for PID ");
+            System.out.print("\tTurnaround time for PID ");
             System.out.print(proc.pid);
             System.out.print(" = ");
-            System.out.println(proc.time_finished - proc.time_init);*/
+            System.out.println(proc.time_finished - proc.time_init);
             tot = tot + proc.time_finished - proc.time_init;
         }
-        //System.out.print("\tAverage turnaround time = ");
+        //System.out.print("\tAverage turnaround time: ");
         return tot/processes.size();
     
     }
@@ -317,13 +317,13 @@ public class SystemOS implements Runnable{
         double tot = 0;
 
         for(Process proc: processes){
-            /*System.out.print("\tWaiting time for PID ");
+            System.out.print("\tWaiting time for PID ");
             System.out.print(proc.pid);
             System.out.print(" = ");
-            System.out.println(proc.waitingTime);*/
+            System.out.println(proc.waitingTime);
             tot = tot + proc.waitingTime;
         }
-        //System.out.print("\tAverage Waiting Time = ");
+        //System.out.print("Average Waiting Time: ");
         
         return tot/processes.size();
     }

@@ -67,8 +67,6 @@ public class MFQ extends Scheduler{
                     s1 = schedulers.get(1);
                     s1.processes = pQ1;
                     s1.getNext(os.isCPUEmpty());
-                    
-                    break;
                 }
                 
             break;
@@ -98,12 +96,13 @@ public class MFQ extends Scheduler{
                 
                 if((!cpuEmpty &&  os.isCPUEmpty())){ //the scheduler preempted the process that was initially there, we insert case 2
                     if(!pQ0.isEmpty()){
-                        //ACÁ DEBERÍA HABER ALGO AAAAAA
+                        s1 = schedulers.get(0);
+                        s1.processes = pQ0;
+                        s1.getNext(os.isCPUEmpty());
                     }else{
                         s1 = schedulers.get(2);
                         s1.processes=pQ2;
                         s1.getNext(os.isCPUEmpty());
-                        break;
                     }
                     
                 }
@@ -133,15 +132,27 @@ public class MFQ extends Scheduler{
                         }
                     }
                 }
+                if((!cpuEmpty &&  os.isCPUEmpty())){ //the scheduler preempted the process that was initially there, we insert case 2
+                    if(!pQ0.isEmpty()){
+                        s1 = schedulers.get(0);
+                        s1.processes = pQ0;
+                        s1.getNext(os.isCPUEmpty());
+                    }else if(!pQ1.isEmpty()){
+                        s1 = schedulers.get(1);
+                        s1.processes = pQ1;
+                        s1.getNext(os.isCPUEmpty());
+                    }else{
+                        s1 = schedulers.get(2);
+                        s1.processes=pQ2;
+                        s1.getNext(os.isCPUEmpty());
+                    }
+                    
+                }
                 break;
         }
 
         if(!os.isCPUEmpty()){
-            System.out.println(os.getProcessInCPU());
-            pQ0LastRunning = false; //assume last process running is not from pQ0
-            pQ1LastRunning = false; //assume last process running is not from pQ1
-            pQ2LastRunning = false; //assume last process running is not from pQ2
-            
+            System.out.println(os.getProcessInCPU());            
             switch(os.getProcessInCPU().getCurrentScheduler()){
                 case 0:
                     pQ0LastRunning = true;

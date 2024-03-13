@@ -43,7 +43,7 @@ public class SJF_P extends Scheduler{
             if(cpuEmpty){
                 for(Process proc : processes){ //iterando sobre la lista de procesos
                     System.out.println(proc);
-                    if(proc.getRemainingTimeInCurrentBurst() < minCycles){ //comparar remainingTime del burst actual
+                    if(proc.getRemainingTimeInCurrentBurst() <= minCycles){ //comparar remainingTime del burst actual
                         
                         pMinCycles = proc;
                         minCycles = proc.getRemainingTimeInCurrentBurst();
@@ -58,7 +58,7 @@ public class SJF_P extends Scheduler{
                 Process procCPU = os.cpu.getProcess();
                 minCycles = procCPU.getRemainingTimeInCurrentBurst();
                 for(Process p1 : processes){
-                    if( p1.getRemainingTimeInCurrentBurst() < minCycles){
+                    if( p1.getRemainingTimeInCurrentBurst() <= minCycles){
                         pMinCycles = p1;
                         minCycles = p1.getRemainingTimeInCurrentBurst();
                     }
