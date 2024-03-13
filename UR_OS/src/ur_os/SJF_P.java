@@ -72,6 +72,10 @@ public class SJF_P extends Scheduler{
 
 
         }
+        //Update waiting time
+        for(Process proc: processes){
+            if(proc.state == ProcessState.READY){proc.waitingTime ++;};
+        }
        
     }
     

@@ -23,7 +23,10 @@ public class RoundRobin extends Scheduler{
         this(os);
         this.q = q;
     }
-    
+
+    void resetCounter(){
+        cont=0;
+    }
    
     @Override
     public void getNext(boolean cpuEmpty) {
@@ -69,7 +72,10 @@ public class RoundRobin extends Scheduler{
                 os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ, null);
             }
         }
-        
+        //Update waiting time
+        for(Process proc: processes){
+            if(proc.state == ProcessState.READY){proc.waitingTime ++;};
+        }
         
     }
     
