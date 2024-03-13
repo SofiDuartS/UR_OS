@@ -10,11 +10,17 @@ package ur_os;
  */
 public class FCFS extends Scheduler{
 
-    
+    boolean mfq;
+
     FCFS(OS os){
         super(os);
+        mfq = false;
     }
-    
+
+    FCFS(OS os, boolean mfq){
+        this(os);
+        this.mfq = mfq;
+    }
    
     @Override
     public void getNext(boolean cpuEmpty) {
@@ -24,9 +30,11 @@ public class FCFS extends Scheduler{
             processes.remove();
             os.interrupt(InterruptType.SCHEDULER_RQ_TO_CPU, p);
         }
-        //Update waiting time
-        for(Process proc: processes){
-            if(proc.state == ProcessState.READY){proc.waitingTime ++;};
+        if(!mfq){
+            //Update waiting time
+            for(Process proc: processes){
+                if(proc.state == ProcessState.READY){proc.waitingTime ++;};
+            }
         }
     }
 

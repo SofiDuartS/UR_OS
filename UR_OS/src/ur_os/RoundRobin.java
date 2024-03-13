@@ -12,16 +12,24 @@ public class RoundRobin extends Scheduler{
 
     int q;
     int cont;
+    boolean mfq;
     
     RoundRobin(OS os){
         super(os);
         q = 5;
         cont=0;
+        mfq=false;
     }
     
     RoundRobin(OS os, int q){
         this(os);
         this.q = q;
+    }
+
+    RoundRobin(OS os, int q, boolean mfq){
+        this(os);
+        this.q = q;
+        this.mfq=mfq;
     }
 
     void resetCounter(){
@@ -36,6 +44,7 @@ public class RoundRobin extends Scheduler{
                 cont=0;
                 Process p = processes.get(0);
                 processes.remove();
+                System.out.println(p.currentScheduler);
                 os.interrupt(InterruptType.SCHEDULER_RQ_TO_CPU, p);
                 cont++;
                 
@@ -69,14 +78,18 @@ public class RoundRobin extends Scheduler{
             if(cont <q){cont ++;}
             else{
                 cont=0;
-                os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ, null);
+                if(mfq){
+                    os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ, null);
+                }
+                
             }
         }
-        //Update waiting time
-        for(Process proc: processes){
-            if(proc.state == ProcessState.READY){proc.waitingTime ++;};
+        if(!mfq){
+            //Update waiting time
+            for(Process proc: processes){
+                if(proc.state == ProcessState.READY){proc.waitingTime ++;}
+            }
         }
-        
     }
     
     @Override
