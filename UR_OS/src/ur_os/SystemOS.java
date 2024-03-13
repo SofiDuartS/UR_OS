@@ -38,8 +38,8 @@ public class SystemOS implements Runnable{
         processes = new ArrayList();
         //initSimulationQueue();
         //initSimulationQueueSimple();
-        //initSimulationQueueSimpler();
-        initSimulationQueueSimpler2();
+        initSimulationQueueSimpler();
+        //initSimulationQueueSimpler2();
         showProcesses();
     }
     
@@ -122,7 +122,7 @@ public class SystemOS implements Runnable{
         processes.add(p);
         
         p = new Process(false);
-        temp = new ProcessBurst(4,ProcessBurstType.CPU);    
+        //temp = new ProcessBurst(4,ProcessBurstType.CPU);   
         p.addBurst(temp);
         temp = new ProcessBurst(3,ProcessBurstType.IO);    
         p.addBurst(temp);

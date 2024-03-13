@@ -56,13 +56,36 @@ public class MFQ extends Scheduler{
         
         
         Scheduler s1 = schedulers.get(currentScheduler);
+        Process prevCPU = os.getProcessInCPU();
         
         switch(currentScheduler){
             case 0:
 
                 s1.processes = (LinkedList) pQ0.clone();
                 s1.getNext(cpuEmpty); //Here s1.processes gets updated, so we should update pQ0 accordingly
-                
+                if(!cpuEmpty &&  os.isCPUEmpty()){ //the scheduler preempted the process that was initially there, we insert case 1
+                    s1 = schedulers.get(1);
+                    s1.processes = (LinkedList) pQ1.clone();
+                    s1.getNext(os.isCPUEmpty());
+                    for(Process proc: pQ1){
+                        if(!s1.processes.contains(proc)){ //if proc no longer in s1.processes, it went to CPU
+                            pQ1.remove(proc);//it shouldn't be on pQ1 since it moved to CPU
+                            if(!proc.isFinished()){ //if proc still has time left
+                                proc.setCurrentScheduler(1); //it will return at any moment, so keep track of where the process came from
+                            }
+                            break;
+                        }
+                    }
+                    for(Process proc: s1.processes){
+                        if(!pQ1.contains(proc)){
+                            /*If there's a process on s1 that's not in pQ1, it means the process has gone back to processes
+                            due to the scheduler's progress. It could happen in RoundRobin*/
+                            pQ2.add(proc); //if the process returns to s1.processes, it should go to the next queue
+                            proc.setCurrentScheduler(2); // since it's in pQ2, scheduler changes
+                        }
+                    }
+                    break;
+                }
                 for(Process proc: pQ0){
                     if(!s1.processes.contains(proc)){ //if proc no longer in s1.processes, it went to CPU
                         pQ0.remove(proc);//it shouldn't be on pQ0 since it moved to CPU
@@ -86,6 +109,29 @@ public class MFQ extends Scheduler{
                 
                 s1.processes = (LinkedList) pQ1.clone();
                 s1.getNext(cpuEmpty); //Here s1.processes gets updated, so we should update pQ1 accordingly
+                if((!cpuEmpty &&  os.isCPUEmpty())){ //the scheduler preempted the process that was initially there, we insert case 2
+                    s1 = schedulers.get(2);
+                    s1.processes=(LinkedList) pQ2.clone();
+                    s1.getNext(os.isCPUEmpty());
+                    for(Process proc: pQ2){
+                        if(!s1.processes.contains(proc)){ //if proc no longer in s1.processes, it went to CPU
+                            pQ2.remove(proc); //it shouldn't be on pQ2 since it moved to CPU
+                            if(!proc.isFinished()){ //if proc still has time left
+                                proc.setCurrentScheduler(2);; //it will return at any moment, so keep track of where the process came from
+                            }
+                            break;
+                        }
+                    }
+                    for(Process proc: s1.processes){
+                        if(!pQ2.contains(proc)){
+                            /*If there's a process on s1 that's not in pQ2, it means the process has gone back to processes
+                            due to the scheduler's progress. It could happen in RoundRobin*/
+                            pQ2.add(proc); //since this is the last queue, the process should return to the same queue
+                            proc.setCurrentScheduler(2); //maybe this is not necessary
+                        }
+                    }
+                    break;
+                }
                 for(Process proc: pQ1){
                     if(!s1.processes.contains(proc)){ //if proc no longer in s1.processes, it went to CPU
                         pQ1.remove(proc);//it shouldn't be on pQ1 since it moved to CPU

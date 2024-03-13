@@ -12,16 +12,24 @@ public class RoundRobin extends Scheduler{
 
     int q;
     int cont;
+    boolean mfq;
     
     RoundRobin(OS os){
         super(os);
         q = 5;
         cont=0;
+        mfq=false;
     }
     
     RoundRobin(OS os, int q){
         this(os);
         this.q = q;
+    }
+
+    RoundRobin(OS os, int q, boolean mfq){
+        this(os);
+        this.q = q;
+        this.mfq=mfq;
     }
 
     void resetCounter(){
@@ -69,7 +77,10 @@ public class RoundRobin extends Scheduler{
             if(cont <q){cont ++;}
             else{
                 cont=0;
-                os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ, null);
+                if(mfq){
+                    os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ, null);
+                }
+                
             }
         }
         //Update waiting time
