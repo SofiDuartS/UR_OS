@@ -26,12 +26,11 @@ public class ReadyQueue {
         
         //s = new FCFS(os);
         
-        //s = new RoundRobin(os,3);
+        s = new RoundRobin(os,3);
         
-        s = new MFQ(os,new RoundRobin(os,3),new RoundRobin(os,6),new FCFS(os));
+        //s = new MFQ(os,new RoundRobin(os,3),new RoundRobin(os,6),new FCFS(os));
         
-        //s = new MFQ(os, new SJF_P(os), new SJF_P(os), new SJF_P(os));
-    }
+        }
     
     public ReadyQueue(OS OS, Scheduler s){
         this.os = os;

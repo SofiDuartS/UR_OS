@@ -118,6 +118,16 @@ public class ProcessBurstList {
         }
         
     }
+
+    public int getTotalExecutionTime(){
+        int tot = 0;
+        
+        for (ProcessBurst burst : bursts) {
+            tot = tot + burst.getCycles();
+        }
+        
+        return tot;
+    }
     
     public String toString(){
        StringBuilder sb = new StringBuilder();
