@@ -23,7 +23,10 @@ public class RoundRobin extends Scheduler{
         this(os);
         this.q = q;
     }
-    
+
+    void resetCounter(){
+        cont=0;
+    }
    
     @Override
     public void getNext(boolean cpuEmpty) {
@@ -38,39 +41,61 @@ public class RoundRobin extends Scheduler{
                 
             }else{
                 Process proc = os.cpu.getProcess();
-                if(cont <=q){
+                if(cont <q){
                     cont++;
-                }else if(cont > q){
+                }else{
                     
                     if (proc.getRemainingTimeInCurrentBurst() != 0){
-                        os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ, proc);
+                        cont=0;
+                        Process p = processes.get(0);
+                        processes.remove();
+                        os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ, p);
+                        cont++;
+                    }else{
+                        cont=0;
+                        Process p = processes.get(0);
+                        processes.remove();
+                        os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ, p);
+                        if(processes.contains(proc)){
+                            processes.remove(proc);
+                        }
+                        cont++;
                     }
                 }
                 
                 
             }
+        }else{
+            if(cont <q){cont ++;}
+            else{
+                cont=0;
+                os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ, null);
+            }
         }
-        
+        //Update waiting time
+        for(Process proc: processes){
+            if(proc.state == ProcessState.READY){proc.waitingTime ++;};
+        }
         
     }
     
     @Override
     public void newProcess(boolean cpuEmpty) {
         //the process goes to the ready queue
-        if(!cpuEmpty){
+        /*if(!cpuEmpty){
             Process p2 =  os.cpu.getProcess();
             os.cpu.removeProcess();
             os.rq.addProcess(p2);
-        }
+        }*/
     } 
 
     @Override
     public void IOReturningProcess(boolean cpuEmpty) {
-        if(!cpuEmpty){
+        /*if(!cpuEmpty){
             Process p3 =  os.cpu.getProcess();
             os.cpu.removeProcess();
             os.rq.addProcess(p3);
-        }
+        }*/
     } 
     
 }

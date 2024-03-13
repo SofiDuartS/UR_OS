@@ -32,6 +32,10 @@ public class OS {
     public boolean isCPUEmpty(){
         return cpu.isEmpty();
     }
+
+    public Process getProcessInCPU(){
+        return cpu.getProcess();
+    }
     
     public void interrupt(InterruptType t, Process p){
         
@@ -53,9 +57,12 @@ public class OS {
             case SCHEDULER_CPU_TO_RQ:
                 //When the scheduler is preemptive and will send the current process in CPU to the Ready Queue
                 Process temp = cpu.extractProcess();
-                rq.addProcess(temp);
+                if(temp != null){
+                    rq.addProcess(temp);
+                }
                 if(p != null){
                     cpu.addProcess(p);
+                    
                 }
                 
             break;
@@ -71,6 +78,9 @@ public class OS {
         
     }
     
+    public void removeProcessFromCPU(){
+        cpu.removeProcess();
+    }
     
     public void create_process(){
         rq.addProcess(new Process(process_count++, system.getTime()));

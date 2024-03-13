@@ -24,6 +24,10 @@ public class FCFS extends Scheduler{
             processes.remove();
             os.interrupt(InterruptType.SCHEDULER_RQ_TO_CPU, p);
         }
+        //Update waiting time
+        for(Process proc: processes){
+            if(proc.state == ProcessState.READY){proc.waitingTime ++;};
+        }
     }
 
     @Override
