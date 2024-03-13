@@ -122,7 +122,7 @@ public class SystemOS implements Runnable{
         processes.add(p);
         
         p = new Process(false);
-        //temp = new ProcessBurst(4,ProcessBurstType.CPU);   
+        temp = new ProcessBurst(4,ProcessBurstType.CPU);   
         p.addBurst(temp);
         temp = new ProcessBurst(3,ProcessBurstType.IO);    
         p.addBurst(temp);
@@ -210,6 +210,9 @@ public class SystemOS implements Runnable{
         int tempID;
         while(!isSimulationFinished() && i < MAX_SIM_CYCLES){//MAX_SIM_CYCLES is the maximum simulation time, to avoid infinite loops
             System.out.println("******Clock: "+i+"******");
+            if(i == 59){
+                int a =0;
+            }
             System.out.println(cpu);
             System.out.println(ioq);
 

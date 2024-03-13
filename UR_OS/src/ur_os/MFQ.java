@@ -61,121 +61,83 @@ public class MFQ extends Scheduler{
         switch(currentScheduler){
             case 0:
 
-                s1.processes = (LinkedList) pQ0.clone();
+                s1.processes = pQ0;
                 s1.getNext(cpuEmpty); //Here s1.processes gets updated, so we should update pQ0 accordingly
                 if(!cpuEmpty &&  os.isCPUEmpty()){ //the scheduler preempted the process that was initially there, we insert case 1
                     s1 = schedulers.get(1);
-                    s1.processes = (LinkedList) pQ1.clone();
+                    s1.processes = pQ1;
                     s1.getNext(os.isCPUEmpty());
-                    for(Process proc: pQ1){
-                        if(!s1.processes.contains(proc)){ //if proc no longer in s1.processes, it went to CPU
-                            pQ1.remove(proc);//it shouldn't be on pQ1 since it moved to CPU
-                            if(!proc.isFinished()){ //if proc still has time left
-                                proc.setCurrentScheduler(1); //it will return at any moment, so keep track of where the process came from
-                            }
-                            break;
-                        }
-                    }
-                    for(Process proc: s1.processes){
-                        if(!pQ1.contains(proc)){
-                            /*If there's a process on s1 that's not in pQ1, it means the process has gone back to processes
-                            due to the scheduler's progress. It could happen in RoundRobin*/
-                            pQ2.add(proc); //if the process returns to s1.processes, it should go to the next queue
-                            proc.setCurrentScheduler(2); // since it's in pQ2, scheduler changes
-                        }
-                    }
+                    
                     break;
                 }
-                for(Process proc: pQ0){
-                    if(!s1.processes.contains(proc)){ //if proc no longer in s1.processes, it went to CPU
-                        pQ0.remove(proc);//it shouldn't be on pQ0 since it moved to CPU
-                        if(!proc.isFinished()){ //if proc still has time left
-                            proc.setCurrentScheduler(0);; //it will return at any moment, so keep track of where the process came from
-                        }
-                        break;
-                    }
-                }
-                for(Process proc: s1.processes){
-                    if(!pQ0.contains(proc)){
-                        /*If there's a process on s1 that's not in pQ0, it means the process has gone back to processes
-                        due to the scheduler's progress. It could happen in RoundRobin*/
-                        pQ1.add(proc); //if the process returns to s1.processes, it should go to the next queue
-                        proc.setCurrentScheduler(1); //since it's in pQ1, scheduler changes
-                    }
-                }
+                
             break;
 
             case 1:
                 
-                s1.processes = (LinkedList) pQ1.clone();
+                s1.processes = pQ1;
                 s1.getNext(cpuEmpty); //Here s1.processes gets updated, so we should update pQ1 accordingly
-                if((!cpuEmpty &&  os.isCPUEmpty())){ //the scheduler preempted the process that was initially there, we insert case 2
-                    s1 = schedulers.get(2);
-                    s1.processes=(LinkedList) pQ2.clone();
-                    s1.getNext(os.isCPUEmpty());
-                    for(Process proc: pQ2){
-                        if(!s1.processes.contains(proc)){ //if proc no longer in s1.processes, it went to CPU
-                            pQ2.remove(proc); //it shouldn't be on pQ2 since it moved to CPU
-                            if(!proc.isFinished()){ //if proc still has time left
-                                proc.setCurrentScheduler(2);; //it will return at any moment, so keep track of where the process came from
-                            }
-                            break;
+                if(!os.isCPUEmpty()){
+                    if(os.getProcessInCPU() != prevCPU){
+                        if(!pQ0.isEmpty()){
+                            Process prev = os.getProcessInCPU();
+                            os.removeProcessFromCPU();
+                            s1.returnProcess(prev);
+                            s1 = schedulers.get(0);
+                            s1.processes = pQ0;
+                            s1.getNext(os.isCPUEmpty());
                         }
                     }
-                    for(Process proc: s1.processes){
-                        if(!pQ2.contains(proc)){
-                            /*If there's a process on s1 that's not in pQ2, it means the process has gone back to processes
-                            due to the scheduler's progress. It could happen in RoundRobin*/
-                            pQ2.add(proc); //since this is the last queue, the process should return to the same queue
-                            proc.setCurrentScheduler(2); //maybe this is not necessary
-                        }
-                    }
-                    break;
-                }
-                for(Process proc: pQ1){
-                    if(!s1.processes.contains(proc)){ //if proc no longer in s1.processes, it went to CPU
-                        pQ1.remove(proc);//it shouldn't be on pQ1 since it moved to CPU
-                        if(!proc.isFinished()){ //if proc still has time left
-                            proc.setCurrentScheduler(1); //it will return at any moment, so keep track of where the process came from
-                        }
+                    if(os.isCPUEmpty()){
+                        s1 = schedulers.get(2);
+                        s1.processes=pQ2;
+                        s1.getNext(os.isCPUEmpty());
                         break;
                     }
                 }
-                for(Process proc: s1.processes){
-                    if(!pQ1.contains(proc)){
-                        /*If there's a process on s1 that's not in pQ1, it means the process has gone back to processes
-                        due to the scheduler's progress. It could happen in RoundRobin*/
-                        pQ2.add(proc); //if the process returns to s1.processes, it should go to the next queue
-                        proc.setCurrentScheduler(2); // since it's in pQ2, scheduler changes
+                
+                if((!cpuEmpty &&  os.isCPUEmpty())){ //the scheduler preempted the process that was initially there, we insert case 2
+                    if(!pQ0.isEmpty()){
+                        //ACÁ DEBERÍA HABER ALGO AAAAAA
+                    }else{
+                        s1 = schedulers.get(2);
+                        s1.processes=pQ2;
+                        s1.getNext(os.isCPUEmpty());
+                        break;
                     }
+                    
                 }
+                
             break;
 
             case 2: 
 
-                s1.processes = (LinkedList) pQ2.clone();
+                s1.processes = pQ2;
                 s1.getNext(cpuEmpty); //Here s1.processes gets updated, so we should update pQ2 accordingly
-                for(Process proc: pQ2){
-                    if(!s1.processes.contains(proc)){ //if proc no longer in s1.processes, it went to CPU
-                        pQ2.remove(proc); //it shouldn't be on pQ2 since it moved to CPU
-                        if(!proc.isFinished()){ //if proc still has time left
-                            proc.setCurrentScheduler(2);; //it will return at any moment, so keep track of where the process came from
+                if(!os.isCPUEmpty()){
+                    if(os.getProcessInCPU()!=prevCPU){
+                        if(!pQ0.isEmpty()){
+                            Process prev = os.getProcessInCPU();
+                            os.removeProcessFromCPU();
+                            s1.returnProcess(prev);
+                            s1 = schedulers.get(0);
+                            s1.processes = pQ0;
+                            s1.getNext(os.isCPUEmpty());
+                        }else if(!pQ1.isEmpty()){
+                            Process prev = os.getProcessInCPU();
+                            os.removeProcessFromCPU();
+                            s1.returnProcess(prev);
+                            s1 = schedulers.get(1);
+                            s1.processes = pQ1;
+                            s1.getNext(os.isCPUEmpty());
                         }
-                        break;
-                    }
-                }
-                for(Process proc: s1.processes){
-                    if(!pQ2.contains(proc)){
-                        /*If there's a process on s1 that's not in pQ2, it means the process has gone back to processes
-                        due to the scheduler's progress. It could happen in RoundRobin*/
-                        pQ2.add(proc); //since this is the last queue, the process should return to the same queue
-                        proc.setCurrentScheduler(2); //maybe this is not necessary
                     }
                 }
                 break;
         }
 
         if(!os.isCPUEmpty()){
+            System.out.println(os.getProcessInCPU());
             pQ0LastRunning = false; //assume last process running is not from pQ0
             pQ1LastRunning = false; //assume last process running is not from pQ1
             pQ2LastRunning = false; //assume last process running is not from pQ2
@@ -242,27 +204,22 @@ public class MFQ extends Scheduler{
             p.setCurrentScheduler(0); //for queue 0, scheduler 0
         }else if(p.getState() == ProcessState.IO){
             //depending on which queue the process left in scheduling, it should be sent to the next
-            if(p.getCurrentScheduler() == 0){
-                pQ1.add(p);
-                p.setCurrentScheduler(1);
-            }else if(p.getCurrentScheduler() == 1){
-                pQ2.add(p);
-                p.setCurrentScheduler(2);
-            }else if(p.getCurrentScheduler() == 2){
-                pQ2.add(p); //if p left the last queue, it will return to the same one
-                p.setCurrentScheduler(2);
-            }
+            pQ0.add(p);
+            p.setCurrentScheduler(0);
         }else if(p.getState() == ProcessState.CPU){
             //if process came from CPU, return it to the next queue
             switch(currentScheduler){
                 case 0:
                     pQ1.add(p);
+                    p.setCurrentScheduler(1);
                     break;
                 case 1:
                     pQ2.add(p);
+                    p.setCurrentScheduler(2);
                     break;
                 case 2:
                     pQ2.add(p); //if it exits last queue, return to same one
+                    p.setCurrentScheduler(2);
                     break;
             }
             os.removeProcessFromCPU();
@@ -283,13 +240,18 @@ public class MFQ extends Scheduler{
 
     void defineCurrentScheduler(){
         /*Qi must be empty for Q(i+1) to begin*/
-        if(!pQ0.isEmpty() || pQ0LastRunning){//hay un error en esta condición
-            currentScheduler = 0;
-        }else if(!pQ1.isEmpty() || pQ1LastRunning){
-            currentScheduler = 1;
-        }else if(!pQ2.isEmpty() || pQ2LastRunning){
-            currentScheduler = 2;
+        if(!os.isCPUEmpty()){
+            currentScheduler = os.getProcessInCPU().currentScheduler;
+        }else{
+            if(!pQ0.isEmpty() ){//|| pQ0LastRunninghay un error en esta condición
+                currentScheduler = 0;
+            }else if(!pQ1.isEmpty() ){//|| pQ1LastRunning
+                currentScheduler = 1;
+            }else if(!pQ2.isEmpty() ){//|| pQ2LastRunning
+                currentScheduler = 2;
+            }
         }
+        
     }
     
 }

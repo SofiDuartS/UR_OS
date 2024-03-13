@@ -47,6 +47,11 @@ public abstract class Scheduler {
         p.setState(ProcessState.READY); //If the process comes from the CPU, just add it to the list
         processes.add(p);
     }
+
+    public void returnProcess(Process p){
+        p.setState(ProcessState.READY);
+        processes.addFirst(p);
+    }
     
     public void update(){
             getNext(os.isCPUEmpty());

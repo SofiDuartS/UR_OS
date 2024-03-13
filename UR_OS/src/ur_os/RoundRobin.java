@@ -44,6 +44,7 @@ public class RoundRobin extends Scheduler{
                 cont=0;
                 Process p = processes.get(0);
                 processes.remove();
+                System.out.println(p.currentScheduler);
                 os.interrupt(InterruptType.SCHEDULER_RQ_TO_CPU, p);
                 cont++;
                 
@@ -85,7 +86,7 @@ public class RoundRobin extends Scheduler{
         }
         //Update waiting time
         for(Process proc: processes){
-            if(proc.state == ProcessState.READY){proc.waitingTime ++;};
+            if(proc.state == ProcessState.READY){proc.waitingTime ++;}
         }
         
     }
