@@ -329,7 +329,7 @@ public class SystemOS implements Runnable{
     }
     
     public double calcAvgContextSwitches(){
-        int cont = 0;
+        double cont = 0;
         int exec1;
         int exec2;
 
