@@ -18,11 +18,8 @@ public class MFQ extends Scheduler{
     private ArrayList<Scheduler> schedulers;
 
     LinkedList<Process> pQ0; //list of processes for queue 0
-    boolean pQ0LastRunning = false;
     LinkedList<Process> pQ1; //list of processes for queue 1
-    boolean pQ1LastRunning = false;
     LinkedList<Process> pQ2; //list of processes for queue 2
-    boolean pQ2LastRunning = false;
     
     MFQ(OS os){
         super(os);
@@ -151,39 +148,6 @@ public class MFQ extends Scheduler{
                 break;
         }
 
-        if(!os.isCPUEmpty()){
-            System.out.println(os.getProcessInCPU());            
-            switch(os.getProcessInCPU().getCurrentScheduler()){
-                case 0:
-                    pQ0LastRunning = true;
-                    pQ1LastRunning = false;
-                    pQ2LastRunning = false;
-                break;
-                case 1:
-                    pQ0LastRunning = false;
-                    pQ1LastRunning = true;
-                    pQ2LastRunning = false;
-                break;
-                case 2:
-                    pQ0LastRunning = false;
-                    pQ1LastRunning = false;
-                    pQ2LastRunning = true;
-                break;
-                
-            }
-        } else{
-            if(pQ0LastRunning){
-                pQ0LastRunning = false;
-                pQ1LastRunning = true;
-                pQ2LastRunning = false;
-            }else if(pQ1LastRunning || pQ2LastRunning){
-                pQ0LastRunning = false;
-                pQ1LastRunning = false;
-                pQ2LastRunning = true;
-            }
-            
-        }
-
         for(Process proc: pQ0){
             //update waiting time
             if(proc.state == ProcessState.READY){proc.waitingTime++;}
@@ -254,11 +218,11 @@ public class MFQ extends Scheduler{
         if(!os.isCPUEmpty()){
             currentScheduler = os.getProcessInCPU().currentScheduler;
         }else{
-            if(!pQ0.isEmpty() ){//|| pQ0LastRunninghay un error en esta condición
+            if(!pQ0.isEmpty() ){
                 currentScheduler = 0;
-            }else if(!pQ1.isEmpty() ){//|| pQ1LastRunning
+            }else if(!pQ1.isEmpty() ){
                 currentScheduler = 1;
-            }else if(!pQ2.isEmpty() ){//|| pQ2LastRunning
+            }else if(!pQ2.isEmpty() ){
                 currentScheduler = 2;
             }
         }
