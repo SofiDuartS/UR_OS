@@ -69,7 +69,7 @@ public class RoundRobin extends Scheduler{
             if(cont <q){cont ++;}
             else{
                 cont=0;
-                os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ, null);
+                //os.interrupt(InterruptType.SCHEDULER_CPU_TO_RQ, null);
             }
         }
         //Update waiting time
