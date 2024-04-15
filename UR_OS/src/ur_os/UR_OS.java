@@ -5,13 +5,16 @@
  */
 package ur_os;
 
+import ur_os.system.SystemOS;
+import ur_os.system.SimulationType;
+
 /**
  *
  * @author super
  */
 public class UR_OS {
 
-    private static String VERSION = "0.0.3.5";
+    private static String VERSION = "0.0.4.2";
     
     /**
      * @param args the command line arguments
@@ -23,7 +26,9 @@ public class UR_OS {
         System.out.println("         UR_OS V."+VERSION);
         System.out.println("************************************");
         
-        SystemOS system = new SystemOS();
+        
+        
+        SystemOS system = new SystemOS(SimulationType.MEMORY_MANAGEMENT);
         
         new Thread(system).start();
         
