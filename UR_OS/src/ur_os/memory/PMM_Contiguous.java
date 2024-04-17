@@ -53,9 +53,14 @@ public class PMM_Contiguous extends ProcessMemoryManager{
 
     @Override
     public int getPhysicalAddress(int logicalAddress){
-            
-        //Include the code to calculate the physical address here
-        return -1;
+        // verify if the logical address is within the limit
+        if(logicalAddress > limit){
+            System.out.println("Error - Logical Address out of limit");
+            return -1;
+        }
+        // if logical address within limit, calculate physical address
+        int physicalAddress = base + logicalAddress;
+        return physicalAddress;
     }
     
     @Override
